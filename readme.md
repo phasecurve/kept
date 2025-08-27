@@ -9,7 +9,7 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - Exposes GET /healthz.
 
- - eturns status 200 and body ok.
+ - Returns status 200 and body healthy.
 
  - Runs on :${KEPT_PORT} (defaults to 8080).
 
@@ -81,4 +81,4 @@ From a fresh clone:
 
 1. make setup
 2. make test → green.
-3. make run and in another terminal:
+3. make run and in another terminal: curl localhost:8080/healthz → returns "healthy."

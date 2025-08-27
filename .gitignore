@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-keptd
+/keptd
 
 # Test binary, built with `go test -c`
 *.test
