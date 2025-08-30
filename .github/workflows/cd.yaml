@@ -1,0 +1,31 @@
+name: Deploy Kept CD (via OIDC)
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write # Required for OIDC
+  contents: read # Needed for actions/checkout
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::950290770042:role/Kept-OIDC-GitHub-CD-Role
+          aws-region: eu-west-2
+
+      - name: Verify AWS identity (for debugging)
+        run: aws sts get-caller-identity
+
+      - name: Deploy (example step)
+        run: |
+          echo "Deploying with SST, CDK, or custom script..."
