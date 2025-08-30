@@ -7,19 +7,15 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 ## Contracts
 ### Application
 
- - Exposes GET /healthz.
+ - Lambda function exposes GET /healthz via API Gateway.
 
- - Returns status 200 and body healthy.
-
- - Runs on :${KEPT_PORT} (defaults to 8080).
-
- - Starts cleanly, logs “listening :<port>”, exits gracefully on SIGTERM.
+ - Returns status 200 and body "Healthy".
 
 ### Tests
 
  - Tests are executed via gotestsum.
 
- - go test ./... must pass without network access.
+ - make test must pass without network access.
 
  - At least one test asserts that /healthz returns 200 OK.
 
@@ -29,7 +25,7 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - make test runs the test suite with coverage.
 
- - make run starts the service locally.
+ - make build compiles Lambda function.
 
  - make deploy invokes SST to deploy.
 
@@ -37,9 +33,9 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - Triggered on push and pull_request.
 
- - Runs with Go 1.25.x.
+ - Runs with Go 1.24.x.
 
- - Executes gotestsum … ./... and go build ./cmd/keptd.
+ - Executes make test and make build.
 
  - Passes only if all tests succeed.
 
@@ -53,7 +49,7 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - Workflow logs emit the API URL.
 
- - Calling GET {ApiUrl}/healthz must return 200 ok.
+ - Calling GET {ApiUrl}/healthz via deployed Lambda must return 200 ok.
 
 ### SST stack
 
@@ -61,15 +57,13 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - Region: eu-west-2.
 
- - One HTTP API resource routes GET /healthz to the Go handler.
+ - One HTTP API resource routes GET /healthz to the Go Lambda handler.
 
  - CloudFormation outputs include ApiUrl.
 
 ### Configuration
 
  - No secrets stored in repo.
-
- - Local defaults allow running without configuration.
 
  - CI requires no secrets.
 
@@ -81,4 +75,4 @@ From a fresh clone:
 
 1. make setup
 2. make test → green.
-3. make run and in another terminal: curl localhost:8080/healthz → returns "healthy."
+3. npx sst dev → test deployment locally via SST.
