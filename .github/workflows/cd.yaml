@@ -72,7 +72,7 @@ jobs:
           echo "Deployment output:"
           echo "$DEPLOY_OUTPUT"
           
-          URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[^[:space:]]+\.execute-api\.[^[:space:]]+\.amazonaws\.com')
+          URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[a-zA-Z0-9]+\.execute-api\.eu-west-2\.amazonaws\.com' | head -1)
           echo "api_url=$URL" >> $GITHUB_OUTPUT
           echo "Staging API URL: $URL"
 
@@ -122,7 +122,7 @@ jobs:
           echo "Deployment output:"
           echo "$DEPLOY_OUTPUT"
           
-          URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[^[:space:]]+\.execute-api\.[^[:space:]]+\.amazonaws\.com')
+          URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[a-zA-Z0-9]+\.execute-api\.eu-west-2\.amazonaws\.com' | head -1)
           echo "api_url=$URL" >> $GITHUB_OUTPUT
           echo "Production API URL: $URL"
 
