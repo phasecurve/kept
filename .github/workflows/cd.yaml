@@ -65,28 +65,20 @@ jobs:
       - name: Build Lambda function
         run: make build
 
-      - name: Debug SST deployment
+      - name: Deploy to staging and capture output
+        id: deploy
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Node version: $(node --version)"
-          echo "NPX version: $(npx --version)"
-          ls -la
-          npx sst@latest --version
-
-      - name: Deploy to staging with SST (verbose)
-        run: |
-          npx sst@latest deploy --stage staging --verbose
-
-      - name: Extract staging API URL
-        id: api-url
-        run: |
-          URL=$(npx sst@latest output --stage staging ApiUrl)
+          DEPLOY_OUTPUT=$(npx sst@latest deploy --stage staging 2>&1)
+          echo "Deployment output:"
+          echo "$DEPLOY_OUTPUT"
+          
+          URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[^[:space:]]+\.execute-api\.[^[:space:]]+\.amazonaws\.com')
           echo "api_url=$URL" >> $GITHUB_OUTPUT
           echo "Staging API URL: $URL"
 
       - name: Test staging endpoint
         run: |
-          curl -f "${{ steps.api-url.outputs.api_url }}/healthz"
+          curl -f "${{ steps.deploy.outputs.api_url }}/healthz"
           echo "✅ Staging endpoint test passed"
 
   deploy-prod:
@@ -123,17 +115,18 @@ jobs:
       - name: Build Lambda function
         run: make build
 
-      - name: Deploy to production with SST
-        run: npx sst@latest deploy --stage prod
-
-      - name: Extract production API URL
-        id: api-url
+      - name: Deploy to production and capture output
+        id: deploy
         run: |
-          URL=$(npx sst@latest output --stage prod ApiUrl)
+          DEPLOY_OUTPUT=$(npx sst@latest deploy --stage prod 2>&1)
+          echo "Deployment output:"
+          echo "$DEPLOY_OUTPUT"
+          
+          URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[^[:space:]]+\.execute-api\.[^[:space:]]+\.amazonaws\.com')
           echo "api_url=$URL" >> $GITHUB_OUTPUT
           echo "Production API URL: $URL"
 
       - name: Test production endpoint
         run: |
-          curl -f "${{ steps.api-url.outputs.api_url }}/healthz"
+          curl -f "${{ steps.deploy.outputs.api_url }}/healthz"
           echo "✅ Production endpoint test passed"
