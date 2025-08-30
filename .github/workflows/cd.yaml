@@ -65,8 +65,17 @@ jobs:
       - name: Build Lambda function
         run: make build
 
-      - name: Deploy to staging with SST
-        run: npx sst@latest deploy --stage staging
+      - name: Debug SST deployment
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Node version: $(node --version)"
+          echo "NPX version: $(npx --version)"
+          ls -la
+          npx sst@latest --version
+
+      - name: Deploy to staging with SST (verbose)
+        run: |
+          npx sst@latest deploy --stage staging --verbose
 
       - name: Extract staging API URL
         id: api-url
