@@ -1,4 +1,4 @@
-name: Deploy Kept CD (via OIDC)
+name: Kept CD
 
 on:
   push:
