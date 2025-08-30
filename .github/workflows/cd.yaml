@@ -10,30 +10,7 @@ permissions:
   contents: read # Needed for actions/checkout
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.24.x"
-      
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      
-      - name: Install dependencies
-        run: make setup
-      
-      - name: Build Lambda function
-        run: make build
-
   deploy-staging:
-    needs: build
     runs-on: ubuntu-latest
     environment: staging
     permissions:
@@ -49,21 +26,10 @@ jobs:
           role-to-assume: arn:aws:iam::950290770042:role/Kept-OIDC-GitHub-CD-Role
           aws-region: eu-west-2
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.24.x"
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
-      - name: Install dependencies
-        run: make setup
-
-      - name: Build Lambda function
-        run: make build
 
       - name: Deploy to staging and capture output
         id: deploy
@@ -99,21 +65,10 @@ jobs:
           role-to-assume: arn:aws:iam::950290770042:role/Kept-OIDC-GitHub-CD-Role
           aws-region: eu-west-2
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.24.x"
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
-      - name: Install dependencies
-        run: make setup
-
-      - name: Build Lambda function
-        run: make build
 
       - name: Deploy to production and capture output
         id: deploy

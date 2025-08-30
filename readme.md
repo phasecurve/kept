@@ -25,9 +25,9 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - make test runs the test suite with coverage.
 
- - make build compiles Lambda function.
-
- - make deploy invokes SST to deploy.
+ - make deploy-staging deploys to staging environment.
+ 
+ - make deploy-prod deploys to production environment.
 
 ### CI
 
@@ -35,7 +35,7 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - Runs with Go 1.24.x.
 
- - Executes make test and make build.
+ - Executes make test.
 
  - Passes only if all tests succeed.
 
@@ -75,4 +75,4 @@ From a fresh clone:
 
 1. make setup
 2. make test → green.
-3. npx sst dev → test deployment locally via SST.
+3. make deploy-staging → deploys and tests staging environment.
