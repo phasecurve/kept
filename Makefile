@@ -1,4 +1,4 @@
-.PHONY: setup test run build deploy clean fmt prep
+.PHONY: setup test run build deploy deploy-staging deploy-prod sst-dev clean fmt prep
 
 # Install required local tooling
 setup:
@@ -13,13 +13,20 @@ test:
 run:
 	go run ./cmd/keptd
 
-# Compile keptd binary
 build:
-	go build -o keptd ./cmd/keptd
+	cd functions/healthz && go build -o bootstrap .
 
-# Deploy via SST
 deploy:
-	npx sst deploy --stage prod
+	npx sst@latest deploy --stage prod
+
+deploy-staging:
+	npx sst@latest deploy --stage staging
+
+deploy-prod:
+	npx sst@latest deploy --stage prod
+
+sst-dev:
+	npx sst@latest dev
 
 # Clean build artifacts
 clean:
