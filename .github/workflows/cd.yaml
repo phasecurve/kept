@@ -10,9 +10,35 @@ permissions:
   contents: read # Needed for actions/checkout
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.24.x"
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      
+      - name: Install dependencies
+        run: make setup
+      
+      - name: Build Lambda function
+        run: make build
 
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -23,9 +49,60 @@ jobs:
           role-to-assume: arn:aws:iam::950290770042:role/Kept-OIDC-GitHub-CD-Role
           aws-region: eu-west-2
 
-      - name: Verify AWS identity (for debugging)
-        run: aws sts get-caller-identity
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-      - name: Deploy (example step)
+      - name: Deploy to staging with SST
+        run: npx sst@latest deploy --stage staging
+
+      - name: Extract staging API URL
+        id: api-url
         run: |
-          echo "Deploying with SST, CDK, or custom script..."
+          URL=$(npx sst@latest output --stage staging ApiUrl)
+          echo "api_url=$URL" >> $GITHUB_OUTPUT
+          echo "Staging API URL: $URL"
+
+      - name: Test staging endpoint
+        run: |
+          curl -f "${{ steps.api-url.outputs.api_url }}/healthz"
+          echo "✅ Staging endpoint test passed"
+
+  deploy-prod:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::950290770042:role/Kept-OIDC-GitHub-CD-Role
+          aws-region: eu-west-2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Deploy to production with SST
+        run: npx sst@latest deploy --stage prod
+
+      - name: Extract production API URL
+        id: api-url
+        run: |
+          URL=$(npx sst@latest output --stage prod ApiUrl)
+          echo "api_url=$URL" >> $GITHUB_OUTPUT
+          echo "Production API URL: $URL"
+
+      - name: Test production endpoint
+        run: |
+          curl -f "${{ steps.api-url.outputs.api_url }}/healthz"
+          echo "✅ Production endpoint test passed"
