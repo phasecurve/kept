@@ -16,8 +16,8 @@ func TestHealthzShouldBeOk(t *testing.T) {
 		t.Error(err)
 	}
 
-	if resp.StatusCode != 201 {
-		t.Errorf("Expected 201 but got %d", resp.StatusCode)
+	if resp.StatusCode != 200 {
+		t.Errorf("Expected 200 but got %d", resp.StatusCode)
 	}
 }
 
