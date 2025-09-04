@@ -11,7 +11,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/sdk/metric"
 
-	healthzhandler "github.com/phasecurve/kept/handlers/healthz"
+	healthzhandler "github.com/phasecurve/kept/lambda/handlers/healthz"
 )
 
 func main() {

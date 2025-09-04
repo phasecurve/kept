@@ -24,7 +24,7 @@ fmt:
 
 tidy:
 	go mod tidy
-	cd functions/healthz && go mod tidy
+	cd lambda/functions/healthz && go mod tidy
 
 build:
 	go build ./...
