@@ -1,8 +1,24 @@
 # Kept
 ## Purpose
 
-Kept is a lightweight, API-first knowledge graph service.
-This initial version exists only to prove the delivery pipeline: one endpoint deployed and verifiable.
+Kept is a lightweight, API-first knowledge graph service with integrated observability.
+This initial version proves the delivery pipeline with OTEL metrics collection: one endpoint deployed and verifiable.
+
+## Project Structure
+
+```
+/
+├── lambda/
+│   ├── functions/healthz/    # Lambda function code
+│   └── handlers/healthz/     # Shared handler logic
+├── collector/
+│   ├── otel-config.yaml      # OTEL collector configuration
+│   └── Dockerfile            # Collector container image
+├── infrastructure/
+│   └── api.ts               # API Gateway IAC module
+├── sst.config.ts            # SST deployment configuration
+└── Makefile                 # Build and deployment targets
+```
 
 ## Contracts
 ### Application
@@ -10,6 +26,8 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
  - Lambda function exposes GET /healthz via API Gateway.
 
  - Returns status 200 and body "Healthy".
+
+ - Integrated with OpenTelemetry for metrics collection.
 
 ### Tests
 
@@ -23,7 +41,13 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - make setup installs required local tooling.
 
+ - make build builds all Go packages.
+
  - make test runs the test suite with coverage.
+
+ - make tidy updates Go module dependencies.
+
+ - make fmt formats Go code.
 
  - make deploy-staging deploys to staging environment.
  
@@ -59,7 +83,17 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 
  - One HTTP API resource routes GET /healthz to the Go Lambda handler.
 
- - CloudFormation outputs include ApiUrl.
+ - Infrastructure defined in modular TypeScript files.
+
+ - CloudFormation outputs include KeptAPI URL.
+
+### Observability
+
+ - OpenTelemetry metrics collection integrated into Lambda functions.
+
+ - OTEL collector configuration ready for Fargate deployment.
+
+ - Metrics include function invocation counters and traces.
 
 ### Configuration
 
@@ -74,5 +108,6 @@ This initial version exists only to prove the delivery pipeline: one endpoint de
 From a fresh clone:
 
 1. make setup
-2. make test → green.
-3. make deploy-staging → deploys and tests staging environment.
+2. make build → builds all packages.
+3. make test → green with 100% coverage.
+4. make deploy-staging → deploys and tests staging environment.
