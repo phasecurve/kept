@@ -1,4 +1,4 @@
-.PHONY: setup test deploy-staging deploy-prod sst-dev clean fmt prep
+.PHONY: setup test deploy-staging deploy-prod sst-dev clean fmt prep tidy build
 
 setup:
 	go install gotest.tools/gotestsum@latest
@@ -21,6 +21,13 @@ clean:
 
 fmt:
 	go fmt ./...
+
+tidy:
+	go mod tidy
+	cd functions/healthz && go mod tidy
+
+build:
+	go build ./...
 
 prep: fmt
 	go vet ./...
