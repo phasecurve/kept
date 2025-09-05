@@ -16,7 +16,7 @@ export default $config({
   async run() {
     const { createKeptAPI } = await import("./infrastructure/api");
     const { createCollector } = await import("./infrastructure/collector");
-    const collectorUrl = createCollector();
-    createKeptAPI(collectorUrl);
+    const { collector, vpc } = await createCollector();
+    createKeptAPI(collector, vpc);
   },
 });

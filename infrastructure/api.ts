@@ -1,19 +1,13 @@
-export function createKeptAPI(collectorUrl: string) {
-  const api = new sst.aws.ApiGatewayV2("KeptAPI", {
-    transform: {
-      route: {
-        handler: (args, opts) => {
-          args.memory ??= "128 MB";
-        },
-      },
-    },
-  });
+export function createKeptAPI(collector: sst.aws.Service, vpc: sst.aws.Vpc) {
+  const api = new sst.aws.ApiGatewayV2("KeptAPI");
 
   api.route("GET /healthz", {
     handler: "lambda/functions/healthz",
     runtime: "go",
+    vpc,
     environment: {
-      OTEL_EXPORTER_OTLP_ENDPOINT: collectorUrl,
+      OTEL_EXPORTER_OTLP_ENDPOINT: collector.service,
     },
+    link: [collector],
   });
 }
