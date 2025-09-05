@@ -8,17 +8,18 @@ Kept is a lightweight, API-first knowledge graph service with integrated observa
 
 ```mermaid
 graph LR
-    A[API Gateway] --> B[Lambda Functions]
+    A[Kept API Gateway] --> B[Kept Lambda Functions]
     B --> C[OTEL Collector<br/>Fargate]
     C --> D[Grafana Cloud]
     
-    E[VPC] --> B
-    E --> C
-    
     F[SST Secrets] --> C
     
+    subgraph "Kept VPC"
+        B
+        C
+    end
+    
     subgraph "Observability"
-        C --> D
         D --> G[Metrics Dashboard]
         D --> H[Alerts]
         D --> I[Traces]
@@ -40,6 +41,11 @@ graph LR
 
 - Go 1.24+
 - Node.js (for SST deployment via npx)
+
+## Live System
+
+- **Health Check**: https://du16229dvk.execute-api.eu-west-2.amazonaws.com/healthz
+- **Metrics Dashboard**: https://markgrayonline.grafana.net/public-dashboards/95bec835def84f2faeb3acfe3aa3cd64
 
 ## Contracts
 ### Application
