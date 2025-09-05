@@ -1,24 +1,45 @@
 # Kept
+
 ## Purpose
 
 Kept is a lightweight, API-first knowledge graph service with integrated observability.
-This initial version proves the delivery pipeline with OTEL metrics collection: one endpoint deployed and verifiable.
+
+## Architecture
+
+```mermaid
+graph LR
+    A[API Gateway] --> B[Lambda Functions]
+    B --> C[OTEL Collector<br/>Fargate]
+    C --> D[Grafana Cloud]
+    
+    E[VPC] --> B
+    E --> C
+    
+    F[SST Secrets] --> C
+    
+    subgraph "Observability"
+        C --> D
+        D --> G[Metrics Dashboard]
+        D --> H[Alerts]
+        D --> I[Traces]
+    end
+```
 
 ## Project Structure
 
 ```
 /
-├── lambda/
-│   ├── functions/healthz/    # Lambda function code
-│   └── handlers/healthz/     # Shared handler logic
-├── collector/
-│   ├── otel-config.yaml      # OTEL collector configuration
-│   └── Dockerfile            # Collector container image
-├── infrastructure/
-│   └── api.ts               # API Gateway IAC module
+├── lambda/                   # Lambda functions and handlers
+├── collector/                # OTEL collector configuration and Dockerfile  
+├── infrastructure/           # SST infrastructure modules (API, services, secrets)
 ├── sst.config.ts            # SST deployment configuration
 └── Makefile                 # Build and deployment targets
 ```
+
+## Requirements
+
+- Go 1.24+
+- Node.js (for SST deployment via npx)
 
 ## Contracts
 ### Application
@@ -91,9 +112,11 @@ This initial version proves the delivery pipeline with OTEL metrics collection: 
 
  - OpenTelemetry metrics collection integrated into Lambda functions.
 
- - OTEL collector configuration ready for Fargate deployment.
+ - OTEL collector deployed on Fargate with direct VPC service discovery.
 
- - Metrics include function invocation counters and traces.
+ - End-to-end metrics pipeline: Lambda → Collector → Grafana Cloud.
+
+ - SST secret management for secure API key handling.
 
 ### Configuration
 
