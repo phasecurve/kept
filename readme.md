@@ -46,11 +46,11 @@ graph LR
 
 Click on the Health Check link below to fire off a call to the Lambda:
 
-- **Health Check**: https://du16229dvk.execute-api.eu-west-2.amazonaws.com/healthz
+- **Health Check**: OFFLINE!! https://du16229dvk.execute-api.eu-west-2.amazonaws.com/healthz
 
 After clicking on the Health Check link you can visit the dashboard here to see the impact:
 
-- **Metrics Dashboard**: https://markgrayonline.grafana.net/public-dashboards/95bec835def84f2faeb3acfe3aa3cd64
+- **Metrics Dashboard**: OFFLINE!! https://markgrayonline.grafana.net/public-dashboards/95bec835def84f2faeb3acfe3aa3cd64
 
 ## Contracts
 
